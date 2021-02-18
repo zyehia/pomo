@@ -20,7 +20,7 @@ sessions=0
 # Settings
 short_break_mins=5
 long_break_mins=15
-pomodoro_mins=1
+pomodoro_mins=25
 date_fmt="%A %d %B %Y"
 datetime_fmt="$date_fmt %H:%M:%S"
 
@@ -49,8 +49,8 @@ function timer {
 function get_approval {
     select choice in yes no; do
       case "$choice" in
-         yes|y) break ;;
-         no|n) exit 0 ;;
+         yes) break ;;
+         no) exit 0 ;;
          *) ;;
       esac
     done
