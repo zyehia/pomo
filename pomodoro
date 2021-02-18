@@ -7,7 +7,7 @@
 
 # Description:
 # This script provides you with a pomodoro timer.
-# It will also log the amount of pomodoros done
+# It will also log the amount of pomodoros done to the pomodoro.log file
 
 # Usage
 # Simply run "./pomodoro" to start the program.
@@ -60,7 +60,7 @@ function get_approval {
 while getopts "s" opt; do
    case "$opt" in
        s) today=$(date "+$date_fmt")
-          sessions_today=$(cat "./pomodoro_log" | grep "$today" | wc -l)
+          sessions_today=$(cat "./pomodoro.log" | grep "$today" | wc -l)
           echo "You have had $sessions_today sessions today"
           exit 0
           ;;
@@ -79,7 +79,10 @@ while true; do
     timer $pomodoro_mins
     end_time=$(date "+$datetime_fmt")
     echo "Times Up!"
-    echo "$start_time,$end_time" >> ./pomodoro_log
+    echo -e "\a"
+    echo -e "\a"
+    echo -e "\a"
+    echo "$start_time,$end_time" >> ./pomodoro.log
 
     sessions=$(( $sessions + 1 ))
 
