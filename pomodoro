@@ -41,7 +41,7 @@ function timer {
        sleep 1s
        clear
 
-       total_seconds=$(( $total_seconds - 120 ))
+       total_seconds=$(( $total_seconds - 1 ))
     done
 }
 
