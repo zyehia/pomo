@@ -1,14 +1,30 @@
 #!/bin/bash
 
+# Author: Ziyad Yehia
+
+# Created: 18th Feb 2021
+# Last Modified: 18th Feb 2021
+
+# Description:
+# This script provides you with a pomodoro timer.
+# It will also log the amount of pomodoros done
+
+# Usage
+# Simply run "./pomodoro" to start the program.
+# Use pomodoro -s to get a count of pomodoros for the given day
+
 echo -e "Welcome to Pomodoro Timer!"
 
 sessions=0
+
+# Settings
 short_break_mins=5
 long_break_mins=15
 pomodoro_mins=1
 date_fmt="%A %d %B %Y"
 datetime_fmt="$date_fmt %H:%M:%S"
 
+# Function to handle the timer
 function timer {
     local total_seconds=$(echo "$1 * 60" | bc)
 
@@ -29,6 +45,7 @@ function timer {
     done
 }
 
+# Function to handle the user interaction
 function get_approval {
     select choice in yes no; do
       case "$choice" in
@@ -39,6 +56,7 @@ function get_approval {
     done
 }
 
+# Handles the -s option
 while getopts "s" opt; do
    case "$opt" in
        s) today=$(date "+$date_fmt")
@@ -51,6 +69,7 @@ while getopts "s" opt; do
    esac
 done
 
+# The main script
 while true; do
     echo -e "This is session $(( sessions + 1 ))\n"
 
