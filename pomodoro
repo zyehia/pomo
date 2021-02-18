@@ -1,0 +1,77 @@
+#!/bin/bash
+
+echo -e "Welcome to Pomodoro Timer!"
+
+sessions=0
+short_break_mins=5
+long_break_mins=15
+pomodoro_mins=1
+date_fmt="%A %d %B %Y"
+datetime_fmt="$date_fmt %H:%M:%S"
+
+function timer {
+    local total_seconds=$(echo "$1 * 60" | bc)
+
+    while [ "$total_seconds" -gt 0 ]; do
+       local minutes_remaining=$(( $total_seconds / 60 ))
+       local seconds_remaining=$(( $total_seconds - $minutes_remaining * 60 ))
+
+       if [ $seconds_remaining -ge 10 ]; then
+         echo "$minutes_remaining:$seconds_remaining"
+       else
+         echo "$minutes_remaining:0$seconds_remaining"
+       fi
+
+       sleep 1s
+       clear
+
+       total_seconds=$(( $total_seconds - 120 ))
+    done
+}
+
+function get_approval {
+    select choice in yes no; do
+      case "$choice" in
+         yes|y) break ;;
+         no|n) exit 0 ;;
+         *) ;;
+      esac
+    done
+}
+
+while getopts "s" opt; do
+   case "$opt" in
+       s) today=$(date "+$date_fmt")
+          sessions_today=$(cat "./pomodoro_log" | grep "$today" | wc -l)
+          echo "You have had $sessions_today sessions today"
+          exit 0
+          ;;
+       \?) echo "Invalid option entered. Exiting"
+           exit 1 ;;
+   esac
+done
+
+while true; do
+    echo -e "This is session $(( sessions + 1 ))\n"
+
+    PS3="Start timer ($pomodoro_mins mins)?: "
+    get_approval
+    start_time=$(date "+$datetime_fmt")
+    timer $pomodoro_mins
+    end_time=$(date "+$datetime_fmt")
+    echo "Times Up!"
+    echo "$start_time,$end_time" >> ./pomodoro_log
+
+    sessions=$(( $sessions + 1 ))
+
+  # Decide on the break length
+  if [ $sessions -eq 0 ] || [ $(( $sessions % 4 )) -ne 0 ]; then
+      PS3="Start break ($short_break_mins mins)?: "
+      get_approval
+      timer  $short_break_mins
+  else
+      PS3="Start Long Break ($long_break_mins mins)?:"
+      get_approval
+      timer  $long_break_mins
+  fi
+done
